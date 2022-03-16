@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="index">
+    <h1>风景画作语义分割及标签图生成</h1>
+    <form class="form_box" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="img"/>
+        <div class="input_box">
+            <div class="input_unit">
+                <label for="type">聚类颜色空间：</label>
+                <select id="type" name="type">
+                    <option value="RGB">RGB</option>
+                    <option value="HSV">HSV（仅根据V聚类）</option>
+                    <option value="Lab">Lab</option>
+                    <option value="gray">灰度图</option>
+                </select>
+            </div>
+            <div class="input_unit">
+                <label for="slic_num">SLIC超像素个数：</label>
+                <input type="number" name="slic_num" value="1000" placeholder="建议选择800以上的偶数"/>
+            </div>
+            <div class="input_unit">
+                <label for="compactness_num">SLIC空间邻近度：</label>
+                <input type="number" name="compactness_num" value="10"/>
+            </div>
+            <div class="input_unit">
+                <label for="step">GLCM步长：</label>
+                <input type="number" name="step" value="2" placeholder="建议值：2,、4、8/16"/>
+            </div>
+            <div class="input_unit">
+                <label for="angle">GLCM角度：</label>
+                <select id="type" name="angle">
+                    <option value="0">0</option>
+                    <option value="1">np.pi/4</option>
+                    <option value="2">np.pi/2</option>
+                    <option value="3">np.pi*3/4</option>
+                </select>
+            </div>
+            <div class="input_unit">
+                <label for="gabor_fre">Gabor滤波器frequency：</label>
+                <input type="text" name="gabor_fre" value="0.6"/>
+            </div>
+        </div>
+        <button type="submit">上传</button>
+    </form>
+    {% if type %}
+        <h3>参数</h3>
+        <p>颜色空间：{{ type }}</p>
+        <p>K-means inertia：{{ inertia }}</p>
+    {% endif %}
+    <div class="image_box">
+        {% if origin_img %}
+            <div class="image_unit">
+                <p>原图</p>
+                <img src="{{ origin_img }}">
+            </div>
+        {% endif %}
+        {% if noplant_img %}
+            <div class="image_unit">
+                <p>K-means第一层分割结果</p>
+                <img src="{{ noplant_img }}">
+            </div>
+        {% endif %}
+        {% if filt_img %}
+            <div class="image_unit">
+                <p>Gabor滤波器提取结果</p>
+                <img src="{{ filt_img }}">
+            </div>
+        {% endif %}
+        {% if GLCM_Entropy %}
+            <div class="image_unit">
+                <p>GLCM熵特征值纹理影像</p>
+                <img src="{{ GLCM_Entropy }}">
+            </div>
+        {% endif %}
+        {% if result %}
+            <div class="image_unit">
+                <p>SLIC超像素分割结果</p>
+                <img src="{{ slic_result }}">
+            </div>
+        {% endif %}
+        {% if result %}
+            <div class="image_unit">
+                <p>HSV提取图像中绿色</p>
+                <img src="{{ hsvMask }}">
+            </div>
+        {% endif %}
+        {% if result %}
+            <div class="image_unit">
+                <p>植被提取结果</p>
+                <img src="{{ result }}">
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+
+</body>
+</html>
+<style>
+    .index {
+        display: flex;
+        flex-flow: wrap column;
+        justify-content: center;
+        align-items: center;
+    }
+    .form_box {
+        margin: 16px 0;
+        display: flex;
+        flex-direction: column;
+    }
+    .input_box {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    .input_unit {
+        width: 400px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 10px;
+    }
+    .image_box {
+        display: flex;
+        flex-flow: row wrap;
+        border: 1px solid gray;
+        border-radius: 6px;
+        padding: 8px;
+    }
+    .image_unit {
+        display: flex;
+        flex-flow: column wrap;
+        align-items: center;
+    }
+    img {
+        max-height: 200px;
+        max-width: 400px;
+        margin: 8px;
+    }
+</style>
