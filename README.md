@@ -44,7 +44,7 @@ source /home/.virtualenvs/env/bin/activate
     - django在服务器上的测试方式和本地一样，都是python manage.py runserver 0.0.0.0:8001，然后就可以访问公网ip:8001，可以正常访问就说明django项目是没问题的，必须保证这个。
 - 测好uwsgi和django都正常后，接下来要把nginx和django通过uwsgi连起来，这步报了很多问题。
     - 配置uswgi.ini文件和nginx.conf文件，注意uswgi的目录位置。
-    - uwsgi.ini文件中的各个参数，chdir是项目在服务器中的目录位置，就是manage.py的位置，module就是 项目名.wsgi:application（一定要:application，这是一个坑），home是虚拟环境路径（之前没加这个结果一直报错），socket是和nginx通信的用的（这里设置的端口号和nginx.conf的uwsgi_pass一定要相同，但端口号要和nginx listen的区分开！），master启用process manager管理进程，vacuum退出时删文件，py-autoreload多长时间内触发重载，下面3个是设置最长响应时间的，放在nginx.conf里生效。
+    - uwsgi.ini文件中的各个参数，chdir是项目在服务器中的目录位置，就是manage.py的位置，module就是 项目名.wsgi:application（一定要:application，这是一个坑），socket是和nginx通信的用的（这里设置的端口号和nginx.conf的uwsgi_pass一定要相同，但端口号要和nginx listen的区分开！），master启用process manager管理进程，vacuum退出时删文件，py-autoreload多长时间内触发重载，下面3个是设置最长响应时间的，放在nginx.conf里生效。
     - nginx.conf
         - server_name写localhost还是127.0.0.1还是公网ip也有讲究，这里用公网ip没问题，之前写localhost好像有ipv6解析的问题（报错502），但别的项目写localhost就没问题，不懂。
         - 算法花时间长，要改最长响应时间，主要是uwsgi_connet_read_timeout，这个对应的是proxy_read_timeout。
