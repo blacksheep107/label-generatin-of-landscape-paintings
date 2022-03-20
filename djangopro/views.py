@@ -35,6 +35,11 @@ def hello(request):
             'hsvMask': False,
             'result': False,
             'type': postObj['type'],
+            'slic_num': postObj['slic_num'],
+            'compactness_num': postObj['compactness_num'],
+            'step': postObj['step'],
+            'angle': postObj['angle'],
+            'gabor_fre': postObj['gabor_fre'],
             'inertia': inertia
         }
         contextArr = ['origin_img', 'noplant_img', 'filt_img', 'GLCM_Entropy','slic_result', 'hsvMask', 'result']

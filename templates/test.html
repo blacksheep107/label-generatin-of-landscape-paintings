@@ -6,10 +6,10 @@
 </head>
 <body>
 <div class="index">
-    <h1>风景画作语义分割及标签图生成</h1>
+    <p class="title">风景画作语义分割及标签图生成</p>
     <form class="form_box" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="file" name="img"/>
+        <input type="file" name="img" id="btn_file"/>
         <div class="input_box">
             <div class="input_unit">
                 <label for="type">聚类颜色空间：</label>
@@ -49,10 +49,20 @@
         <button type="submit">上传</button>
     </form>
     {% if type %}
-        <h3>参数</h3>
-        <p>颜色空间：{{ type }}</p>
-        <p>K-means inertia：{{ inertia }}</p>
+        <div class="para_box">
+            <p class="title">参数</p>
+            <div class="para_block">
+                <p>颜色空间：{{ type }}</p>
+                <p>SLIC超像素个数：{{ slic_num }}</p>
+                <p>SLIC空间邻近度：{{ compactness_num }}</p>
+                <p>GLCM步长：{{ step }}</p>
+                <p>GLCM角度：{{ angle }}</p>
+                <p>Gabor滤波器frequency：{{ gabor_fre }}</p>
+                <p>K-means inertia：{{ inertia }}</p>
+            </div>
+        </div>
     {% endif %}
+
     <div class="image_box">
         {% if origin_img %}
             <div class="image_unit">
@@ -108,45 +118,27 @@
         flex-flow: wrap column;
         justify-content: center;
         align-items: center;
+        width: 100%;
+    }
+    .index > .title {
+        font: 200%/1.5 "Baskerville Old Face","Palatino Linotype",Serif;
+        font-weight: bolder;
+    }
+    .para_box > .title {
+        font: 150%/1.5 "Baskerville Old Face","Palatino Linotype",Serif;
+        font-weight: bolder;
+    }
+    .para_box > .para_block {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
     }
     .form_box {
         margin: 16px 0;
         display: flex;
         flex-direction: column;
-        box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #fff;
+        box-shadow: 1px 1px 6px #bebebe, -20px -20px 60px #fff;
         padding: 30px;
-    }
-    input {
-        outline: none;
-        color: #666;
-        font-size: .9em;
-        padding: 0.5em;
-        border-radius: 0.2em;
-        border: 1px solid #e3e3e3;
-        -webkit-appearance: none;
-    }
-    input:hover {
-        border: 1px solid #b4a078;
-    }
-    input:focus {
-        border: 1px solid #b4a078;
-        box-shadow: 0 0 0 2px rgba(180, 160, 120, 0.2);
-    }
-    select {
-        outline: none;
-        color: #666;
-        font-size: .9em;
-        padding: 0.5em;
-        border-radius: 0.2em;
-        border: 1px solid #e3e3e3;
-        {#-webkit-appearance: none;#}
-    }
-    select:hover{
-        border: 1px solid #b4a078;
-    }
-    select:focus {
-        border: 1px solid #b4a078;
-        box-shadow: 0 0 0 2px rgba(180, 160, 120, 0.2);
+        min-width: 80%;
     }
     .input_box {
         display: grid;
@@ -160,11 +152,10 @@
     }
     .image_box {
         display: grid;
-        padding: 8px;
         justify-content: space-around;
         align-items: center;
         grid-template-columns: 1fr 1fr 1fr 1fr;
-        width: 90%;
+        width: 100%;
     }
     .image_unit {
         display: flex;
@@ -175,5 +166,71 @@
         max-height: 200px;
         max-width: 400px;
         margin: 8px;
+    }
+    .para_box {
+        margin: 16px 0;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 1px 1px 6px #bebebe, -20px -20px 60px #fff;
+        padding: 0 30px;
+        min-width: 80%;
+    }
+    .para_block > p, .para_box > p {
+        height: 1.5rem;
+        margin: 0.5rem 0;
+    }
+    button {
+        display: inline-block;
+        line-height: 1;
+        white-space: nowrap;
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #dcdfe6;
+        color: #606266;
+        -webkit-appearance: none;
+        text-align: center;
+        box-sizing: border-box;
+        outline: none;
+        margin: 0;
+        transition: .1s;
+        font-weight: 500;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        padding: 12px 20px;
+        font-size: 14px;
+        border-radius: 4px;
+        color: #fff;
+        background-color: #409eff;
+        border-color: #409eff;
+    }
+    button:focus, button:hover {
+        background: #66b1ff;
+        border-color: #66b1ff;
+        color: #fff;
+    }
+    input, select {
+        {#-webkit-appearance: none;#}
+        background-color: #fff;
+        background-image: none;
+        border-radius: 4px;
+        border: 1px solid #dcdfe6;
+        box-sizing: border-box;
+        color: #606266;
+        display: inline-block;
+        font-size: inherit;
+        height: 40px;
+        line-height: 40px;
+        outline: none;
+        padding: 0 15px;
+        transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+        width: 100%;
+    }
+    input:focus {
+        outline: none;
+        border-color: #409eff;
+    }
+    input:hover {
+        border-color: #c0c4cc;
     }
 </style>
