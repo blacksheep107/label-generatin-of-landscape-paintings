@@ -105,7 +105,7 @@ def getGLCM(filename, st, an, gabor_fre):
     start = time.time()
     img = gaborGetTexture(filename, gabor_fre)
     print('---------------0. Parameter Setting-----------------')
-    nbit = 16 # gray levels
+    nbit = 8 # gray levels
     mi, ma = 0, 255 # max gray and min gray
     # slide_window = 31 # sliding window
     slide_window = 19 # sliding window

@@ -45,7 +45,7 @@ def hello(request):
         }
         contextArr = ['origin_img', 'noplant_img', 'filt_img', 'GLCM_Entropy','slic_result', 'hsvMask', 'result', 'result_noslic']
         pathArr = [
-            'img.png', 'noplant.png', 'filt_imag.png', 'GLCM_Features.png','slic_result.png', 'hsvMask.png', 'result.png', 'result_noslic.png'
+            'img.png', 'noplant.png', 'filt_imag.png', 'GLCM_Features.png','slic_boundaries.png', 'hsvMask.png', 'result.png', 'result_noslic.png'
         ]
         for i in range(len(pathArr)):
             path = os.path.join(os.getcwd(), 'static/images', pathArr[i])
@@ -73,6 +73,7 @@ def onlykmeans(request):
         context = {
             'origin_img': False,
             'noplant_img': False,
+            'type': postObj['type'],
             'inertia': inertia
         }
         contextArr = ['origin_img', 'noplant_img']
