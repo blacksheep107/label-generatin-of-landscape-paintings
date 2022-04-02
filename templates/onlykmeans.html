@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>风景画作语义分割及标签图生成</title>
+    <title>kmeans分割</title>
 </head>
 <body>
 <div class="index">
@@ -20,31 +20,6 @@
                     <option value="gray">灰度图</option>
                 </select>
             </div>
-            <div class="input_unit">
-                <label for="slic_num">SLIC超像素个数：</label>
-                <input type="number" name="slic_num" value="1000" placeholder="建议选择800以上的偶数"/>
-            </div>
-            <div class="input_unit">
-                <label for="compactness_num">SLIC空间邻近度：</label>
-                <input type="number" name="compactness_num" value="10"/>
-            </div>
-            <div class="input_unit">
-                <label for="step">GLCM步长：</label>
-                <input type="number" name="step" value="2" placeholder="建议值：2,、4、8/16"/>
-            </div>
-            <div class="input_unit">
-                <label for="angle">GLCM角度：</label>
-                <select id="type" name="angle">
-                    <option value="0">0</option>
-                    <option value="1">np.pi/4</option>
-                    <option value="2">np.pi/2</option>
-                    <option value="3">np.pi*3/4</option>
-                </select>
-            </div>
-            <div class="input_unit">
-                <label for="gabor_fre">Gabor滤波器frequency：</label>
-                <input type="text" name="gabor_fre" value="0.6"/>
-            </div>
         </div>
         <button type="submit">上传</button>
     </form>
@@ -53,11 +28,6 @@
             <p class="title">参数</p>
             <div class="para_block">
                 <p>颜色空间：{{ type }}</p>
-                <p>SLIC超像素个数：{{ slic_num }}</p>
-                <p>SLIC空间邻近度：{{ compactness_num }}</p>
-                <p>GLCM步长：{{ step }}</p>
-                <p>GLCM角度：{{ angle }}</p>
-                <p>Gabor滤波器frequency：{{ gabor_fre }}</p>
                 <p>K-means inertia：{{ inertia }}</p>
             </div>
         </div>
@@ -76,46 +46,8 @@
                 <img src="{{ noplant_img }}">
             </div>
         {% endif %}
-        {% if filt_img %}
-            <div class="image_unit">
-                <p>Gabor滤波器提取结果</p>
-                <img src="{{ filt_img }}">
-            </div>
-        {% endif %}
-        {% if GLCM_Entropy %}
-            <div class="image_unit">
-                <p>GLCM熵特征值纹理影像</p>
-                <img src="{{ GLCM_Entropy }}">
-            </div>
-        {% endif %}
-        {% if slic_result %}
-            <div class="image_unit">
-                <p>SLIC超像素分割结果</p>
-                <img src="{{ slic_result }}">
-            </div>
-        {% endif %}
-        {% if hsvMask %}
-            <div class="image_unit">
-                <p>HSV提取图像中绿色</p>
-                <img src="{{ hsvMask }}">
-            </div>
-        {% endif %}
-        {% if result %}
-            <div class="image_unit">
-                <p>植被提取结果</p>
-                <img src="{{ result }}">
-            </div>
-        {% endif %}
-        {% if result_noslic %}
-            <div class="image_unit">
-                <p>无SLIC预处理植被提取结果</p>
-                <img src="{{ result_noslic }}">
-            </div>
-        {% endif %}
     </div>
 </div>
-
-
 </body>
 </html>
 <style>
@@ -161,7 +93,7 @@
         display: grid;
         justify-content: space-around;
         align-items: center;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
         width: 100%;
     }
     .image_unit {
@@ -170,8 +102,8 @@
         align-items: center;
     }
     img {
-        max-height: 200px;
-        max-width: 362px;
+        max-height: 600px;
+        max-width: 600px;
         margin: 8px;
     }
     .para_box {
