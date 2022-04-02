@@ -287,13 +287,47 @@ def getResult(centers, row, col, maskThresh, n, label, imgHSV, type, imgNoSLICHS
     pic_noslic.save(os.path.join(os.getcwd(), 'static/images', "result_noslic.png"), "PNG")
     # pic_notexture.save(os.path.join(os.getcwd(), 'static\\images', "result_notexture.png"), "PNG")
     return pic_part
+def getNoKmeansResult(centers, row, col, n, label, type):
+    pic_new = image.new("RGBA", (row, col))
+    color = [(0, 0, 255, 255),
+             (0, 255, 255, 255),
+             (255, 255, 0, 255),
+             (255, 0, 0, 255)]  # 蓝青黄红
+    index = 0
+    # 标签颜色固定
+    centersTmp = copy.copy(centers)
+    centersMap = {}
+    for i in range(n):
+        for j in range(i+1, n):
+            if centersTmp[i][index] > centersTmp[j][index]:
+                centersTmp[i], centersTmp[j] = copy.copy(centersTmp[j]), copy.copy(centersTmp[i])
+    for i in range(n):
+        centersMap[centersTmp[i][index]] = i
+    for i in range(row):
+        for j in range(col):
+            pic_new.putpixel((i, j), color[centersMap[centers[label[i][j]][index]]])
 
+    pic_new.save(os.path.join(os.getcwd(), 'static/images', "noplant.png"), "PNG")
+    return pic_new
 n = 3
 # filename = os.path.join(os.getcwd(), 'static\\images', "img.png")
 # if not os.path.exists(filename):
 #     raise Http404
+def onlykmeans(filename, t):
+    type = t
+    imgData, row, col = loadData(filename, type)
+    # kmeans聚类
+    label, centers, inertia = kmeans(n, None, imgData, type)
+    print(inertia)
+    # 转置
+    label = np.transpose(label.reshape([row, col]))
+    row, col = col, row
+    # 写入标签图
+    getNoKmeansResult(centers, row, col, n, label, type)
+    return inertia
 
 def main(filename, t, step, angle, slic_num, compactness_num, gabor_fre):
+    print(filename)
     type = t
     imgData, row, col = loadData(filename, type)
     # 转HSV颜色模型

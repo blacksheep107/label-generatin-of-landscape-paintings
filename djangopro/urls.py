@@ -23,4 +23,5 @@ urlpatterns = [
     path('hello/', views.hello),
     url(r'^search-form/$', search.serch_from),
     # url(r'^search/$', search.search),
+    path('kmeans/', views.onlykmeans),
 ]
