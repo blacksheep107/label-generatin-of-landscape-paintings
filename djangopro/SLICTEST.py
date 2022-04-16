@@ -18,28 +18,23 @@ def generate_pixels():
     '''
     # mgrid生成height*width的矩阵，把0,2轴交换，然后0,1轴交换，结果是00,01,02...10,11,12的一个遍历矩阵
     indnp = np.mgrid[0:SLIC_height,0:SLIC_width].swapaxes(0,2).swapaxes(0,1)
-    # 进度条
+    # 10次迭代
     for i in tqdm.tqdm(range(SLIC_ITERATIONS)):
-        # 距离数组，每个像素和对应的簇中心的距离
+        # 每个像素和对应的簇中心的距离
         SLIC_distances = 1 * np.ones(img.shape[:2])
         # 遍历簇中心
         for j in range(SLIC_centers.shape[0]):
             # 一个超像素的长宽边界值
             x_low, x_high = int(SLIC_centers[j][3] - step), int(SLIC_centers[j][3] + step)
             y_low, y_high = int(SLIC_centers[j][4] - step), int(SLIC_centers[j][4] + step)
-
             if x_low <= 0:
                 x_low = 0
-            #end
             if x_high > SLIC_width:
                 x_high = SLIC_width
-            #end
             if y_low <=0:
                 y_low = 0
-            #end
             if y_high > SLIC_height:
                 y_high = SLIC_height
-            #end
 
             # 范围内所有像素点距离中心点的颜色距离（欧氏距离）
             cropimg = SLIC_labimg[y_low : y_high , x_low : x_high]

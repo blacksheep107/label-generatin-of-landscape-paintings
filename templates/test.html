@@ -12,6 +12,15 @@
         <input type="file" name="img" id="btn_file"/>
         <div class="input_box">
             <div class="input_unit">
+                <label for="pictype">画作类型：</label>
+                <select id="pictype" name="pictype">
+                    <option value="colorink">彩墨画</option>
+                    <option value="ink">水墨画</option>
+                    <option value="oil">油画</option>
+                    <option value="water">水彩画</option>
+                </select>
+            </div>
+            <div class="input_unit">
                 <label for="type">聚类颜色空间：</label>
                 <select id="type" name="type">
                     <option value="RGB">RGB</option>
@@ -61,58 +70,102 @@
                 <p>K-means inertia：{{ inertia }}</p>
             </div>
         </div>
+        <div class="pic-legend">
+            <div class="pic-legend-unit">
+                <span></span>
+                <p class="legend-text">云水</p>
+            </div>
+            <div class="pic-legend-unit">
+                <span></span>
+                {% if pictype == 'colorink' or pictype == 'ink' %}
+                    <p class="legend-text">山石</p>
+                {% else %}
+                    <p class="legend-text">迎光面植被</p>
+                {% endif %}
+            </div>
+            <div class="pic-legend-unit">
+                <span></span>
+                {% if pictype == 'colorink' or pictype == 'ink' %}
+                    <p class="legend-text">植被</p>
+                {% else %}
+                    <p class="legend-text">背光面植被</p>
+                {% endif %}
+            </div>
+            {% if pictype == 'colorink' %}
+                <div class="pic-legend-unit">
+                    <span class="green"></span>
+                    <p class="legend-text">树木</p>
+                </div>
+            {% endif %}
+        </div>
     {% endif %}
-
-    <div class="image_box">
-        {% if origin_img %}
-            <div class="image_unit">
-                <p>原图</p>
-                <img src="{{ origin_img }}">
-            </div>
-        {% endif %}
-        {% if noplant_img %}
-            <div class="image_unit">
-                <p>K-means第一层分割结果</p>
-                <img src="{{ noplant_img }}">
-            </div>
-        {% endif %}
-        {% if filt_img %}
-            <div class="image_unit">
-                <p>Gabor滤波器提取结果</p>
-                <img src="{{ filt_img }}">
-            </div>
-        {% endif %}
-        {% if GLCM_Entropy %}
-            <div class="image_unit">
-                <p>GLCM熵特征值纹理影像</p>
-                <img src="{{ GLCM_Entropy }}">
-            </div>
-        {% endif %}
-        {% if slic_result %}
-            <div class="image_unit">
-                <p>SLIC超像素分割结果</p>
-                <img src="{{ slic_result }}">
-            </div>
-        {% endif %}
-        {% if hsvMask %}
-            <div class="image_unit">
-                <p>HSV提取图像中绿色</p>
-                <img src="{{ hsvMask }}">
-            </div>
-        {% endif %}
-        {% if result %}
-            <div class="image_unit">
-                <p>植被提取结果</p>
-                <img src="{{ result }}">
-            </div>
-        {% endif %}
-        {% if result_noslic %}
-            <div class="image_unit">
-                <p>无SLIC预处理植被提取结果</p>
-                <img src="{{ result_noslic }}">
-            </div>
-        {% endif %}
-    </div>
+    {% if pictype == 'colorink' %}
+        <div class="image_box">
+            {% if origin_img %}
+                <div class="image_unit">
+                    <p>原图</p>
+                    <img src="{{ origin_img }}">
+                </div>
+            {% endif %}
+            {% if noplant_img %}
+                <div class="image_unit">
+                    <p>K-means第一层分割结果</p>
+                    <img src="{{ noplant_img }}">
+                </div>
+            {% endif %}
+            {% if filt_img %}
+                <div class="image_unit">
+                    <p>Gabor滤波器提取结果</p>
+                    <img src="{{ filt_img }}">
+                </div>
+            {% endif %}
+            {% if GLCM_Entropy %}
+                <div class="image_unit">
+                    <p>GLCM熵特征值纹理影像</p>
+                    <img src="{{ GLCM_Entropy }}">
+                </div>
+            {% endif %}
+            {% if slic_result %}
+                <div class="image_unit">
+                    <p>SLIC超像素分割结果</p>
+                    <img src="{{ slic_result }}">
+                </div>
+            {% endif %}
+            {% if hsvMask %}
+                <div class="image_unit">
+                    <p>HSV提取图像中绿色</p>
+                    <img src="{{ hsvMask }}">
+                </div>
+            {% endif %}
+            {% if result_noslic %}
+                <div class="image_unit">
+                    <p>无SLIC预处理植被提取结果</p>
+                    <img src="{{ result_noslic }}">
+                </div>
+            {% endif %}
+            {% if result %}
+                <div class="image_unit">
+                    <p>标签图结果</p>
+                    <img src="{{ result }}">
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="image_box_2">
+            {% if origin_img %}
+                <div class="image_unit">
+                    <p>原图</p>
+                    <img src="{{ origin_img }}">
+                </div>
+            {% endif %}
+            {% if noplant_img %}
+                <div class="image_unit">
+                    <p>标签图结果</p>
+                    <img src="{{ noplant_img }}">
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 </div>
 
 
@@ -164,10 +217,22 @@
         grid-template-columns: 1fr 1fr 1fr 1fr;
         width: 100%;
     }
+    .image_box_2 {
+                display: grid;
+        justify-content: space-around;
+        align-items: center;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
     .image_unit {
         display: flex;
         flex-flow: column wrap;
         align-items: center;
+    }
+    .image_box_2 img {
+        max-height: 600px;
+        max-width: 600px;
+        margin: 8px;
     }
     img {
         max-height: 200px;
@@ -239,5 +304,32 @@
     }
     input:hover {
         border-color: #c0c4cc;
+    }
+    .pic-legend {
+        display: flex;
+        flex-flow: wrap row;
+        margin: 0 auto 0 120px;
+    }
+    .pic-legend > .pic-legend-unit {
+        display: flex;
+        flex-flow: nowrap row;
+        align-items: center;
+    }
+    .pic-legend-unit > span {
+        width: 1rem;
+        height: 1rem;
+        margin: 0 1rem;
+    }
+    .pic-legend-unit:nth-child(1) > span {
+        background: rgb(255, 255, 0);
+    }
+    .pic-legend-unit:nth-child(2) > span {
+        background: rgb(0, 255, 255);
+    }
+    .pic-legend-unit:nth-child(3) > span {
+        background: rgb(0, 0, 255);
+    }
+    .pic-legend-unit > .green {
+        background: rgb(0, 200, 0);
     }
 </style>
