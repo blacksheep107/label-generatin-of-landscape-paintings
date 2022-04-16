@@ -105,7 +105,7 @@ def getGLCM(filename, st, an, gabor_fre):
     start = time.time()
     img = gaborGetTexture(filename, gabor_fre)
     print('---------------0. Parameter Setting-----------------')
-    nbit = 16 # gray levels
+    nbit = 8 # gray levels
     mi, ma = 0, 255 # max gray and min gray
     # slide_window = 31 # sliding window
     slide_window = 19 # sliding window
@@ -248,13 +248,9 @@ def getResult(centers, row, col, maskThresh, n, label, imgHSV, type, imgNoSLICHS
              (255, 0, 0, 255)]  # 蓝青黄红
 
     index = 0
-    # if type == 'RGB':
-    #     index = 0
-    # elif type == 'HSV':
-    #     index = 0
-    #     # color[0], color[2] = color[2], color[0]
-    # elif type == 'LAB':
-    #     index = 0
+    # if type == 'LAB':
+    #     index = 2
+
     # 标签颜色固定
     centersTmp = copy.copy(centers)
     centersMap = {}
@@ -273,11 +269,16 @@ def getResult(centers, row, col, maskThresh, n, label, imgHSV, type, imgNoSLICHS
             #     pic_notexture.putpixel((i, j), color[centersMap[centers[label[i][j]][index]]])
 
             flag = maskThresh[j][i] == 0 and color[centersMap[centers[label[i][j]][index]]] != (255, 255, 0, 255)
-            if flag and imgHSV[j][i][0] in range(26, 99) and imgHSV[j][i][1] in range(43, 255) and imgHSV[j][i][2] in range(46, 255):
+            flag2 = imgHSV[j][i][1] in range(43, 255) and imgHSV[j][i][2] in range(46, 255)
+            if flag and flag2 and (imgHSV[j][i][0] in range(11, 99) or imgHSV[j][i][0] in range(0, 10) or imgHSV[j][i][0] in range(156, 180)):
                 pic_part.putpixel((i, j), (0, 200, 0, 255)) # 绿色
+            # if flag and flag2 and imgHSV[j][i][0] in range(11, 99):
+            #     pic_part.putpixel((i, j), (0, 200, 0, 255)) # 绿色
+            # elif flag and flag2 and (imgHSV[j][i][0] in range(0, 10) or imgHSV[j][i][0] in range(156, 180)):
+            #     pic_part.putpixel((i, j), (255, 192, 203, 255))  # 红色
             else:
                 pic_part.putpixel((i, j), color[centersMap[centers[label[i][j]][index]]])
-            if flag and imgNoSLICHSV[j][i][0] in range(26, 99) and imgNoSLICHSV[j][i][1] in range(43, 255) and imgNoSLICHSV[j][i][2] in range(46, 255):
+            if flag and imgNoSLICHSV[j][i][0] in range(11, 99) and imgNoSLICHSV[j][i][1] in range(43, 255) and imgNoSLICHSV[j][i][2] in range(46, 255):
                 pic_noslic.putpixel((i, j), (0, 200, 0, 255)) # 绿色
             else:
                 pic_noslic.putpixel((i, j), color[centersMap[centers[label[i][j]][index]]])
@@ -287,8 +288,9 @@ def getResult(centers, row, col, maskThresh, n, label, imgHSV, type, imgNoSLICHS
     pic_noslic.save(os.path.join(os.getcwd(), 'static/images', "result_noslic.png"), "PNG")
     # pic_notexture.save(os.path.join(os.getcwd(), 'static\\images', "result_notexture.png"), "PNG")
     return pic_part
-def getNoKmeansResult(centers, row, col, n, label, type):
+def getNoGLCMResult(centers, row, col, n, label, type):
     pic_new = image.new("RGBA", (row, col))
+    # pic_part = image.new("RGBA", (row, col))
     color = [(0, 0, 255, 255),
              (0, 255, 255, 255),
              (255, 255, 0, 255),
@@ -305,14 +307,52 @@ def getNoKmeansResult(centers, row, col, n, label, type):
         centersMap[centersTmp[i][index]] = i
     for i in range(row):
         for j in range(col):
+            # flag = color[centersMap[centers[label[i][j]][index]]] != (255, 255, 0, 255)
             pic_new.putpixel((i, j), color[centersMap[centers[label[i][j]][index]]])
+            # if flag and imgHSV[j][i][0] in range(11, 99) and imgHSV[j][i][1] in range(43, 255) and imgHSV[j][i][2] in range(46, 255):
+            #     # if imgHSV[j][i][2] in range(46, 155):
+            #     pic_part.putpixel((i, j), (0, 200, 0, 255)) # 绿色
+            #     # else:
+            #     #     pic_part.putpixel((i, j), (252, 230, 202, 255))  # 暖色调植物
+            # else:
+            #     pic_part.putpixel((i, j), color[centersMap[centers[label[i][j]][index]]])
 
     pic_new.save(os.path.join(os.getcwd(), 'static/images', "noplant.png"), "PNG")
+    # pic_part.save(os.path.join(os.getcwd(), 'static/images', "result.png"), "PNG")
     return pic_new
-n = 3
 # filename = os.path.join(os.getcwd(), 'static\\images', "img.png")
 # if not os.path.exists(filename):
 #     raise Http404
+def getOilResult(centers, row, col, num, label, type, imgHSV):
+    pic_new = image.new("RGBA", (row, col))
+    pic_part = image.new("RGBA", (row, col))
+    color = [(0, 0, 255, 255),
+             (255, 255, 0, 255)]  # 蓝黄
+    index = 0
+    # 标签颜色固定
+    centersTmp = copy.copy(centers)
+    centersMap = {}
+    for i in range(num):
+        for j in range(i+1, num):
+            if centersTmp[i][index] > centersTmp[j][index]:
+                centersTmp[i], centersTmp[j] = copy.copy(centersTmp[j]), copy.copy(centersTmp[i])
+    for i in range(num):
+        centersMap[centersTmp[i][index]] = i
+    for i in range(row):
+        for j in range(col):
+            flag = color[centersMap[centers[label[i][j]][index]]] != (255, 255, 0, 255)
+            pic_new.putpixel((i, j), color[centersMap[centers[label[i][j]][index]]])
+            if flag and imgHSV[j][i][0] in range(11, 99) and imgHSV[j][i][1] in range(43, 255) and imgHSV[j][i][2] in range(46, 255):
+                # if imgHSV[j][i][2] in range(46, 155):
+                pic_part.putpixel((i, j), (0, 200, 0, 255)) # 绿色
+                # else:
+                #     pic_part.putpixel((i, j), (252, 230, 202, 255))  # 暖色调植物
+            else:
+                pic_part.putpixel((i, j), color[centersMap[centers[label[i][j]][index]]])
+    pic_new.save(os.path.join(os.getcwd(), 'static/images', "noplant.png"), "PNG")
+    pic_part.save(os.path.join(os.getcwd(), 'static/images', "result.png"), "PNG")
+    return pic_new
+n = 3
 def onlykmeans(filename, t):
     type = t
     imgData, row, col = loadData(filename, type)
@@ -322,31 +362,37 @@ def onlykmeans(filename, t):
     # 转置
     label = np.transpose(label.reshape([row, col]))
     row, col = col, row
+    imgHSV = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2HSV)
     # 写入标签图
-    getNoKmeansResult(centers, row, col, n, label, type)
+    getNoGLCMResult(centers, row, col, n, label, type, imgHSV)
     return inertia
-
-def main(filename, t, step, angle, slic_num, compactness_num, gabor_fre):
+def main(filename, t, step, angle, slic_num, compactness_num, gabor_fre, pt):
     print(filename)
     type = t
+    pictype = pt
     imgData, row, col = loadData(filename, type)
-    # 转HSV颜色模型
-    imgHSV, imgNoSLICHSV = getHSV(filename, slic_num, compactness_num)
-
-    # 获取灰度共生矩阵熵
-    getGLCM(filename, step, angle, float(gabor_fre))
-    # 获取纹理遮罩
-    maskThresh = getMask(os.path.join(os.getcwd(), 'static/images', "GLCM_Features.png"), row, col)
-
-    # kmeans聚类
-    label, centers, inertia = kmeans(n, None, imgData, type)
-    print(inertia)
-    # 转置
-    label = np.transpose(label.reshape([row, col]))
-    row, col = col, row
-    # 写入标签图
-    getResult(centers, row, col, maskThresh, n, label, imgHSV, type, imgNoSLICHSV)
-    return inertia
+    if pictype == 'colorink':
+        # 转HSV颜色模型
+        imgHSV, imgNoSLICHSV = getHSV(filename, slic_num, compactness_num)
+        # 获取灰度共生矩阵熵
+        getGLCM(filename, step, angle, float(gabor_fre))
+        # 获取纹理遮罩
+        maskThresh = getMask(os.path.join(os.getcwd(), 'static/images', "GLCM_Features.png"), row, col)
+        # kmeans聚类
+        label, centers, inertia = kmeans(n, None, imgData, type)
+        label = np.transpose(label.reshape([row, col]))
+        row, col = col, row
+        # 写入标签图
+        getResult(centers, row, col, maskThresh, n, label, imgHSV, type, imgNoSLICHSV)
+        return inertia
+    else:
+        # kmeans聚类
+        label, centers, inertia = kmeans(n, None, imgData, type)
+        label = np.transpose(label.reshape([row, col]))
+        row, col = col, row
+        # 写入标签图
+        getNoGLCMResult(centers, row, col, n, label, type)
+        return inertia
     # path = os.path.join(os.getcwd(), 'static\\images', "part.png")
     # img_stream = ''
     # with open(path, 'rb') as img_f:

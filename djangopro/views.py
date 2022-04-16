@@ -25,7 +25,8 @@ def hello(request):
                     postObj['angle'],
                     postObj['slic_num'],
                     postObj['compactness_num'],
-                    postObj['gabor_fre'])
+                    postObj['gabor_fre'],
+                    postObj['pictype'],)
         context = {
             'origin_img': False,
             'noplant_img': False,
@@ -35,6 +36,7 @@ def hello(request):
             'hsvMask': False,
             'result': False,
             'result_noslic':False,
+            'pictype': postObj['pictype'],
             'type': postObj['type'],
             'slic_num': postObj['slic_num'],
             'compactness_num': postObj['compactness_num'],
@@ -45,7 +47,7 @@ def hello(request):
         }
         contextArr = ['origin_img', 'noplant_img', 'filt_img', 'GLCM_Entropy','slic_result', 'hsvMask', 'result', 'result_noslic']
         pathArr = [
-            'img.png', 'noplant.png', 'filt_imag.png', 'GLCM_Features.png','slic_result.png', 'hsvMask.png', 'result.png', 'result_noslic.png'
+            'img.png', 'noplant.png', 'filt_imag.png', 'GLCM_Features.png','slic_boundaries.png', 'hsvMask.png', 'result.png', 'result_noslic.png'
         ]
         for i in range(len(pathArr)):
             path = os.path.join(os.getcwd(), 'static/images', pathArr[i])
@@ -55,7 +57,10 @@ def hello(request):
                     img_stream = img_f.read()
                     img_stream = base64.b64encode(img_stream)
                     context[contextArr[i]] = "data:image/jpg;base64," + str(img_stream)[2: -1]
+        # if context['pictype'] == 'colorink':
         return render(request, 'test.html', context)
+        # else:
+        #     return render(request, 'onlykmeans.html', context)
 
 def onlykmeans(request):
     if request.method == 'GET':
@@ -73,6 +78,7 @@ def onlykmeans(request):
         context = {
             'origin_img': False,
             'noplant_img': False,
+            'type': postObj['type'],
             'inertia': inertia
         }
         contextArr = ['origin_img', 'noplant_img']
