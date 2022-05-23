@@ -122,9 +122,10 @@ def getGLCM(filename, st, an, gabor_fre):
     print(img)
     h, w = img.shape
     print('------------------2. Calcu GLCM---------------------')
+    # 各个滑动窗口
     glcm, size = get_glcm.calcu_glcm(img, mi, ma, nbit, slide_window, step, angle)
     print('-----------------3. Calcu Feature-------------------')
-    #
+    # 不同step和angle
     for i in range(glcm.shape[2]):
         for j in range(glcm.shape[3]):
             glcm_cut = np.zeros((nbit, nbit, h, w), dtype=np.float32)
